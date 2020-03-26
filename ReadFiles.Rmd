@@ -1,0 +1,42 @@
+---
+title: "FY20EmailAppGen"
+author: "Office of Marketing and Brand Management"
+date: "3/26/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+
+
+a <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email7.csv"
+b <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email8A.csv"
+c <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email8B.csv"
+d <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email8BB.csv"
+e <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email9.csv"
+f <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email10.csv"
+g <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email11.csv"
+h <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email12.csv"
+i <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email13.csv"
+j <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email14.csv"
+k <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email15.csv"
+l <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email1.csv"
+m <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email2.csv"
+n <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email3.csv"
+o <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email4.csv"
+p <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email5.csv"
+q <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email6.csv"
+```
+
+```{r}
+filesList <- list(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q)
+filesList
+
+sapply(filesList, read.csv, skip = 10)
+```
+
