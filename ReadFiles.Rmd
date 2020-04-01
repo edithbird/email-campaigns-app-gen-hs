@@ -2,17 +2,63 @@
 title: "FY20EmailAppGen"
 author: "Office of Marketing and Brand Management"
 date: "3/26/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r}
+library(readxl)
+library(dplyr)
+library(reactable)
 ```
 
 
+```{r}
+#both <- inner_join(Links, Overview)
+path <- "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmails.xlsx"
+
+Overview <- read_xlsx(path, sheet = "Overview", range = NULL, col_names = TRUE,
+col_types = NULL, na = "", trim_ws = TRUE, skip = 0)
+Links <- read_xlsx(path, sheet = "Links", range = NULL, col_names = TRUE,
+col_types = NULL, na = "", trim_ws = TRUE, skip = 0)
+
+colnames(Links) <- c("Link", "Total_Clicks", "Unique_Clicks", "Net_CTR", "Name", "LinkPlacement", "Date", "PctUniqueClicks", "PctTotalClicks", "DeliverabilityRate")
+both <- read.csv("C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmails1.csv", header = T, stringsAsFactors = F)
+```
 
 ```{r}
 
+# df = data.frame( id = I(c("abcd_123_ABC","abc_5234_NHYK")), x = c(1.0,2.0) )
+# 
+# temp <- seq(from=3, by=3, length.out = length(df))
+# 
+# dfn <- df %>% dplyr::mutate(new_id = unlist(strsplit(id, split="_"))[temp])
+# dfn
+# df
+# library(reshape2)
+# both <- colsplit(both$Name, '-', names =  c('Campaign','Email'))
+# head(both)
+# dim(both)
+# 
+# write.csv(both, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmails1.csv", row.names = F)
+# library(tidyr)
+both <- both %>% mutate(
+new_id = strsplit(Name, split="-"))
+head(both)
+#reactable(both, searchable = T, filterable = T)
+```
+
+```{r eval=FALSE, include=FALSE}
+a <- read.csv("C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email7.csv", header = T, stringsAsFactors = F, skip = 11)
 
 a <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email7.csv"
 b <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email8A.csv"
@@ -31,12 +77,120 @@ n <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email3.csv"
 o <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email4.csv"
 p <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email5.csv"
 q <- "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/Email6.csv"
+
+
 ```
 
-```{r}
-filesList <- list(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q)
-filesList
 
-sapply(filesList, read.csv, skip = 10)
+```{r eval=FALSE, include=FALSE}
+fahrenheit_to_celsius <- function(temp_F) {
+  temp_C <- read.csv(k, header = T, stringsAsFactors = F, skip = 11)
+  temp_C <- temp_C[, c(1,3:7)]
+  temp_C <- slice(temp_C, 1:(n()-1))
+  temp_C$ID <- "Email15"
+  temp_C <- temp_C  
+  colnames(temp_C) <- c("Link", "UniqueClicks", "PctUniqClicks", "TotalClicks", "PctTotal Clicks", "NetCTR", "EmailNumber" )
+
+  return(temp_C)
+}
+```
+
+```{r eval=FALSE, include=FALSE}
+a <- fahrenheit_to_celsius(a)
+b <- fahrenheit_to_celsius(b)
+c <- fahrenheit_to_celsius(c)
+d <- fahrenheit_to_celsius(d)
+e <- fahrenheit_to_celsius(e)
+f <- fahrenheit_to_celsius(f)
+g <- fahrenheit_to_celsius(g)
+h <- fahrenheit_to_celsius(h)
+i <- fahrenheit_to_celsius(i)
+j <- fahrenheit_to_celsius(j)
+k <- fahrenheit_to_celsius(k)
+l <- fahrenheit_to_celsius(l)
+m <- fahrenheit_to_celsius(m)
+n <- fahrenheit_to_celsius(n)
+o <- fahrenheit_to_celsius(o)
+p <- fahrenheit_to_celsius(p)
+q <- fahrenheit_to_celsius(q)
+
+
+fahrenheit_to_celsius(d)
+fahrenheit_to_celsius(e)
+fahrenheit_to_celsius(f)
+fahrenheit_to_celsius(g)
+fahrenheit_to_celsius(h)
+fahrenheit_to_celsius(i)
+fahrenheit_to_celsius(j)
+fahrenheit_to_celsius(k)
+fahrenheit_to_celsius(l)
+fahrenheit_to_celsius(m)
+fahrenheit_to_celsius(n)
+fahrenheit_to_celsius(o)
+fahrenheit_to_celsius(p)
+fahrenheit_to_celsius(q)
+
+
+
+a <- a %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()), )
+
+b <- b %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+c <- c %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+d <- d %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+e <- e %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+f <- f %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+g <- g %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+h <- h %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+i <- i %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+j <- j %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+k <- k %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+l <- l %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+m <- m %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+n <- n %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+o <- o %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+p <- p %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+q <- q %>% mutate(LinkPlacement = paste0(EmailNumber, " Link_Number ", row_number()))
+
+a 
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+```
+
+```{r eval=FALSE, include=FALSE}
+all <- rbind.data.frame(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q)
+all <- all %>% mutate(Date = ifelse(EmailNumber == "Email1", as.character.Date("2019-07-23", format = "%Y-%m-%d"), 
+                                    ifelse(EmailNumber == "Email2", as.character.Date("2019-07-31", format = "%Y-%m-%d"),
+                                           ifelse(EmailNumber == "Email3", as.character.Date("2019-09-04", format = "%Y-%m-%d"),
+                                                  ifelse(EmailNumber == "Email4", as.character.Date("2019-09-17", format = "%Y-%m-%d"),
+                                                         ifelse(EmailNumber == "Email5", as.character.Date("2019-10-09", format = "%Y-%m-%d"), 
+                                                                ifelse(EmailNumber == "Email6", as.character.Date("2019-10-23", format = "%Y-%m-%d"),
+                                                                       ifelse(EmailNumber == "Email7", as.character.Date("2019-11-05", format = "%Y-%m-%d"),
+                                                                              ifelse(EmailNumber == "Email9", as.character.Date("2019-12-04", format = "%Y-%m-%d"),
+                                                                                     ifelse(EmailNumber == "Email0", as.character.Date("2019-12-17", format = "%Y-%m-%d"),
+                                                                                            ifelse(EmailNumber == "Email11", as.character.Date("2020-01-08", format = "%Y-%m-%d"),
+                                                                                                   ifelse(EmailNumber == "Email12", as.character.Date("2020-01-28", format = "%Y-%m-%d"),
+                                                                                                          ifelse(EmailNumber == "Email13", as.character.Date("2020-02-04", format = "%Y-%m-%d"),
+                                                                                                                 ifelse(EmailNumber == "Email14", as.character.Date("2020-03-15", format = "%Y-%m-%d"),
+                                                                                                                        ifelse(EmailNumber == "Email15", as.character.Date("2020-03-18", format = "%Y-%m-%d"), as.character.Date("2019-11-21", format = "%Y-%m-%d"))))))))))))))))
+  
+  all
+
+  
+
+write.csv(all,  "C:/Users/christine.iyer/Box/FY20_Email_HS_AppGen/EmailClicks.csv", row.names = F)
 ```
 
