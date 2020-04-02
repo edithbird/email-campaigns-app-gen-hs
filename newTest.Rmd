@@ -1,0 +1,56 @@
+---
+title: "Cleanup"
+author: "Office of Marketing and Brand Management"
+date: "4/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(readxl)
+library(tidyverse)
+library(knitr)
+```
+
+
+```{r}
+path <- "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmails.xlsx"
+
+#To get most stats
+overview <- read_excel(path, sheet = "Overview")
+overview <- overview %>% 
+  mutate(Delivered = `Deliverability Rate`* `Emails Sent`) %>% 
+  rename(Email = Name, Date = `Date/Time Sent`, Sent = `Emails Sent`, UniqueCTR = `Unique Click-Through Rate`, OpenRate = `Open Rate`, DeliveryRate = `Deliverability Rate`,Delivered = Delivered ) %>% select(Email, Date, Sent, UniqueCTR, OpenRate, DeliveryRate, Delivered )
+
+#To get total clicks
+links <- read_excel(path, sheet = "Links")
+links1 <- links %>% group_by(Email = `Email Name`) %>% summarise(Total_Clicks = sum(Total), Unique_Clicks = sum(Unique))
+links1
+
+#To get unsubscribes
+
+unsubs <- links %>% filter(Link == "Unsubscribe") %>% rename(Email = `Email Name`, totalUnsubs = Total, uniqueUnsubs = Unique, NetCTR_Unsub = `Net CTRs`) %>% select(Email,totalUnsubs, uniqueUnsubs, NetCTR_Unsub, LinkPlacement)
+unsubs
+
+names(overview)
+names(links1)
+names(unsubs)
+
+
+
+cleanData <- left_join(overview, unsubs)
+cleanData <- left_join(cleanData, links1)
+head(cleanData)
+cleanData <- cleanData %>% mutate(
+  OpenRate = paste0(OpenRate*100, "%"), 
+  UniqueCTR = paste0(UniqueCTR*100, "%"),
+  DeliveryRate = paste0(DeliveryRate*100, "%"),
+  UnsubscribeRate = paste0(round(uniqueUnsubs/Delivered *100,2), "%"), 
+  Delivered = round(Delivered, 0), 
+  Date = as.Date(Date, format = "%Y-%m-%d %HH:%MM:%SS"))
+head(cleanData)  
+write.csv(cleanData, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/cleanMCData.csv", row.names = F)
+```
+

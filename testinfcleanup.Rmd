@@ -1,0 +1,130 @@
+---
+title: "GoogleSheets_EmailTidyUp"
+author: "Office of Marketing and Brand Management"
+date: "4/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(readxl)
+library(tidyverse)
+library(knitr)
+```
+
+```{r eval=FALSE, include=FALSE}
+path <- "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/EmailTargetX.xlsx"
+August2017 <- read_excel(path, sheet = "August2017")
+names(August2017)
+August2017 <- August2017 %>% mutate(Delivered = 0) %>% select(`Broadcast: Broadcast Name`, Date, Sent, Delivered, everything())
+colnames(August2017) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+# August2017 <- August2017 %>% mutate(
+#   FY = 
+#   
+#   Campaign = stringr::str_extract(`Broadcast: Broadcast Name`, "^.{18}")) %>% select(Campaign, everything())
+
+```
+
+
+
+# a <- "Goldman Sachs; Morgan Stanley"
+# b <- "UBS; Wells Fargo; Wachovia"
+# c <- "Bank of America"
+# d <- rbind.data.frame(a,b,c) 
+# d$Bank <- d$c..Goldman.Sachs..Morgan.Stanley....UBS..Wells.Fargo..Wachovia...
+# 
+# 
+# tbl2 <- d %>% separate(Bank, 
+#         sep = "; ", into = c("a", "b", "c"))
+# kable(tbl2)
+
+
+#path <- "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/EmailTargetX.xlsx"
+September2017 <- read_excel(path, sheet = "September2017")
+
+
+colnames(September2017) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+
+
+October2017 <- read_excel(path, sheet = "October2017")
+colnames(October2017) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+October2017
+
+
+November2017 <- read_excel(path, sheet = "November2017")
+colnames(November2017) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+December2017 <- read_excel(path, sheet = "December2017")
+colnames(December2017) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+January2018 <- read_excel(path, sheet = "January2018")
+colnames(January2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+February2018 <- read_excel(path, sheet = "February2018")
+colnames(February2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+
+March2018 <- read_excel(path, sheet = "March2018")
+colnames(March2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+
+April2018 <- read_excel(path, sheet = "April2018")
+colnames(April2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+
+May2018 <- read_excel(path, sheet = "May2018")
+May2018 <- May2018 %>% select(`Broadcast: Broadcast Name`, Date:`Unsub. Rate`)
+colnames(May2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+
+
+June2018 <- read_excel(path, sheet = "June2018")
+June2018 <- June2018 %>% select(`Broadcast: Broadcast Name`, Date:`Unsub. Rate`)
+colnames(June2018) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+names(June2018)
+names(February2018)
+
+
+FY2019 <- read_excel(path, sheet = "FY2019")
+FY2019 <- FY2019 %>% select(`Broadcast: Broadcast Name`, `Day of Start.Date`, Sent ,Delivered, Opens, Clicks, `Opt Outs`, Bounces, `Bounce Rate`, CTOR, CTR, `Open Rate`, `Unsubscribe Rate`)
+colnames(FY2019) <- c("Broadcast", "Date", "Sent", "Delivered","Opens", "Clicks", "OptOuts","Bounces","BounceRate","CTOR","CTR","OpenRate","UnsubRate")
+names(FY2019)
+names(February2018)
+
+
+
+AllEMails <- rbind.data.frame(August2017, September2017, October2017, December2017, January2018, February2018, March2018, April2018, May2018, June2018, FY2019)
+kable(head(AllEMails))
+
+write.csv(AllEMails, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmailsTidied.csv", row.names = F )
+```
+
+```{r}
+allEmails1 <- read.csv("C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmails1.csv", header = T, stringsAsFactors = F)
+
+kable(allEmails1 %>% 
+  filter(Link == "Unsubscribe") %>% 
+  group_by(Name, Date.Time.Sent) %>% 
+  summarise(Unsubs = sum(Unique_Clicks),
+            Sent = sum(Emails.Sent) ,
+            DR =  sum(Deliverability.Rate) *100,
+            Delivered = round(Sent * DR,0), 
+            UnsubRate = Unsubs/Delivered*100, 
+            CTR = mean(Net_CTR) *100, 
+            OpenRate = sum(Open.Rate)*100))
+```
+
