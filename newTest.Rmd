@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
 ```{r}
 library(readxl)
 library(tidyverse)
@@ -22,7 +24,7 @@ path <- "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/Al
 overview <- read_excel(path, sheet = "Overview")
 overview <- overview %>% 
   mutate(Delivered = `Deliverability Rate`* `Emails Sent`) %>% 
-  rename(Email = Name, Date = `Date/Time Sent`, Sent = `Emails Sent`, UniqueCTR = `Unique Click-Through Rate`, OpenRate = `Open Rate`, DeliveryRate = `Deliverability Rate`,Delivered = Delivered ) %>% select(Email, Date, Sent, UniqueCTR, OpenRate, DeliveryRate, Delivered )
+  rename(Email = Name, Date = `Date/Time Sent`, Sent = `Emails Sent`, UniqueCTR = `Unique Click-Through Rate`, OpenRate = `Open Rate`, DeliveryRate = `Deliverability Rate`,Delivered = Delivered ) %>% select(Email, Campaign,Date, Sent, UniqueCTR, OpenRate, DeliveryRate, Delivered )
 
 #To get total clicks
 links <- read_excel(path, sheet = "Links")
@@ -33,7 +35,9 @@ links1
 
 unsubs <- links %>% filter(Link == "Unsubscribe") %>% rename(Email = `Email Name`, totalUnsubs = Total, uniqueUnsubs = Unique, NetCTR_Unsub = `Net CTRs`) %>% select(Email,totalUnsubs, uniqueUnsubs, NetCTR_Unsub, LinkPlacement)
 unsubs
-
+write.csv(overview,"C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/overview.csv", row.names = F)
+write.csv(links1,"C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/links1.csv", row.names = F)
+write.csv(unsubs, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/unsubs.csv" )
 names(overview)
 names(links1)
 names(unsubs)
@@ -42,15 +46,100 @@ names(unsubs)
 
 cleanData <- left_join(overview, unsubs)
 cleanData <- left_join(cleanData, links1)
-head(cleanData)
-cleanData <- cleanData %>% mutate(
-  OpenRate = paste0(OpenRate*100, "%"), 
-  UniqueCTR = paste0(UniqueCTR*100, "%"),
-  DeliveryRate = paste0(DeliveryRate*100, "%"),
-  UnsubscribeRate = paste0(round(uniqueUnsubs/Delivered *100,2), "%"), 
-  Delivered = round(Delivered, 0), 
-  Date = as.Date(Date, format = "%Y-%m-%d %HH:%MM:%SS"))
+
+
+
+
+cleanData <- cleanData %>% 
+  
+  mutate(Date = as.Date(Date, format = "%Y-%m-%d %HH:%MM:%SS")) %>% 
+  group_by(Month=floor_date(Date, "month"), Campaign) %>% 
+  summarize(Sent = round(mean(Sent), 0), 
+               uniqueUnsubs = mean(uniqueUnsubs), 
+               Delivered = round(mean(Delivered), 0),
+               OpenRate = paste0(mean(OpenRate)*100, "%"),
+               UniqueCTR = paste0(mean(UniqueCTR)*100, "%"),
+               DeliveryRate = paste0(mean(DeliveryRate)*100, "%"),
+               UnsubscribeRate = paste0(round(uniqueUnsubs/Delivered *100,4), "%"))
+
+
+
 head(cleanData)  
+head(cleanData)
+
+
+
+```
+
+```{r}
+oldTidied <- read.csv("C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/AllEmailsTidied.csv", header = T, stringsAsFactors = F)
+head(oldTidied)
+oldTidied1 <- oldTidied %>% 
+  mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>% 
+  group_by(Month=floor_date(Date, "month"), Campaign) %>% 
+  summarise(Sent = mean(Sent), 
+               #uniqueUnsubs = mean(uniqueUnsubs), 
+               Delivered = round(mean(Delivered),0),
+               OpenRate = paste0(round(mean(OpenRate)*100,2), "%"),
+               UniqueCTR = paste0(round(mean(CTR)*100,2), "%"),
+               DeliveryRate = paste0(round(Delivered/Sent*100,2), "%"),
+               UnsubscribeRate = paste0(mean(UnsubRate *100,4), "%")) %>% 
+  filter(Sent>100)
+oldTidied1
+  
+
+```
+
+```{r}
 write.csv(cleanData, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/cleanMCData.csv", row.names = F)
+
+write.csv(oldTidied1, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/cleanTXData.csv", row.names = F)
+```
+
+```{r}
+newMCRaw <- read.csv("C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/newMCraw.csv", header = T, stringsAsFactors = F)
+```
+
+Sent	Delivered	Opens	Clicks	Opt Outs	Bounces	Link Placement
+
+```{r}
+
+newerMCRaw <- newMCRaw %>% 
+  mutate(
+    Date.Time.Sent = as.Date(Date.Time.Sent, (format = ("%m/%d/%Y"))), 
+    Bounces = 0) %>% 
+  select(
+    Campaign, 
+    Date = Date.Time.Sent, 
+    Sent = Emails.Sent,
+    Delivered, 
+    Opens = Opened,
+    Clicks, 
+    OptOuts = UniqueUnsub, 
+    Bounces, 
+    LinkPlacement) %>% 
+  group_by(
+    Campaign,
+    Month=floor_date(Date, "month")) %>%
+  summarise(
+    Sent = sum(Sent), 
+    Delivered = sum(Delivered), 
+    Opens= sum(Opens),
+    Clicks = sum(Clicks), 
+    OptOuts = sum(OptOuts), 
+    Bounces = sum(Bounces),
+    LinkPlacement = mean(LinkPlacement))
+  
+
+# newerMCRaw <- newMCRaw  
+#   summarise(Sent = mean(Sent), 
+#                #uniqueUnsubs = mean(uniqueUnsubs), 
+#                Delivered = round(mean(Delivered),0))
+#                
+ newerMCRaw 
+```
+
+```{r}
+write.csv( newerMCRaw, "C:/Users/christine.iyer/Box/FY20_EmailAnalytics/FY20_Email_HS_AppGen/newerMCraw.csv", row.names = F)
 ```
 
